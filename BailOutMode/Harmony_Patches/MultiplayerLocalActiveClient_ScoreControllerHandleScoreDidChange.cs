@@ -12,7 +12,7 @@ namespace BailOutMode.Harmony_Patches
     /// <summary>
     /// This patches ClassToPatch.MethodToPatch(Parameter1Type arg1, Parameter2Type arg2)
     /// </summary>
-    [HarmonyPatch(typeof(MultiplayerLocalActiveClient), nameof(MultiplayerLocalActiveClient.ScoreControllerHandleScoreDidChange),
+    [HarmonyPatch(typeof(MultiplayerLocalActiveClient), "HandleScoreDidChange",
         new Type[] { // List the Types of the method's parameters.
         typeof(int),
         typeof(int)})]
@@ -23,12 +23,12 @@ namespace BailOutMode.Harmony_Patches
             Plugin.LevelStarted += OnLevelStarted;
         }
 
-        public static int lastRawScore { get; private set; } = -1;
+        public static int lastMultipliedScore { get; private set; } = -1;
         public static int lastModifiedScore { get; private set; } = -1;
 
         public static void ResetLastScores()
         {
-            lastRawScore = -1;
+            lastMultipliedScore = -1;
             lastModifiedScore = -1;
         }
 
@@ -37,11 +37,11 @@ namespace BailOutMode.Harmony_Patches
             ResetLastScores();
         }
 
-        static bool Prefix(ref int rawScore, ref int modifiedScore)
+        static bool Prefix(ref int multipliedScore, ref int modifiedScore)
         {
             if (BailOutController.instance.numFails > 0)
                 return false;
-            lastRawScore = rawScore;
+            lastMultipliedScore = multipliedScore;
             lastModifiedScore = modifiedScore;
             return true;
         }

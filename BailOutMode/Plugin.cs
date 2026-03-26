@@ -43,10 +43,12 @@ namespace BailOutMode
         public void InitWithConfig(Config conf)
         {
             Configuration.instance = conf.Generated<Configuration>();
-            SetGameplaySetupTab(Configuration.instance.EnableGameplayTab);
-            Logger.log.Debug("Config loaded"); 
-            BeatSaberMarkupLanguage.Settings.BSMLSettings.instance.AddSettingsMenu(PluginName, Resource_Settings_Path, Configuration.instance);
-
+            Logger.log.Debug("Config loaded");
+            BeatSaberMarkupLanguage.Util.MainMenuAwaiter.MainMenuInitializing += delegate
+            {
+                SetGameplaySetupTab(Configuration.instance.EnableGameplayTab);
+                BeatSaberMarkupLanguage.Settings.BSMLSettings.Instance.AddSettingsMenu(PluginName, Resource_Settings_Path, Configuration.instance);
+            };
         }
 
         [OnEnable]
@@ -104,13 +106,13 @@ namespace BailOutMode
                 if (enabled)
                 {
                     Logger.log?.Debug($"Enabling GameplaySetup tab.");
-                    GameplaySetup.instance.AddTab(PluginName, Resource_GameplaySettings_Path, Configuration.instance);
+                    GameplaySetup.Instance.AddTab(PluginName, Resource_GameplaySettings_Path, Configuration.instance);
                     gameplayTabEnabled = true;
                 }
                 else
                 {
                     Logger.log?.Debug($"Disabling GameplaySetup tab.");
-                    GameplaySetup.instance.RemoveTab(PluginName);
+                    GameplaySetup.Instance.RemoveTab(PluginName);
                     gameplayTabEnabled = false;
                 }
             }

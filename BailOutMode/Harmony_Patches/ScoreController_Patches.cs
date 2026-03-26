@@ -9,33 +9,33 @@ using HarmonyLib;
 /// </summary>
 namespace BailOutMode.Harmony_Patches
 {
-    [HarmonyPatch(typeof(ScoreController), nameof(ScoreController.prevFrameRawScore), MethodType.Getter)]
+    [HarmonyPatch(typeof(ScoreController), nameof(ScoreController.multipliedScore), MethodType.Getter)]
     public class ScoreController_prevFrameRawScore
     {
-        static bool Prefix(ref int ____prevFrameRawScore, ref int __result)
+        static bool Prefix(ref int ____multipliedScore, ref int __result)
         {
-            int lastRawScore = MultiplayerLocalActiveClient_ScoreControllerHandleScoreDidChange.lastRawScore;
-            if (BailOutController.instance.numFails > 0 && lastRawScore >= 0)
+            int lastMultipliedScore = MultiplayerLocalActiveClient_ScoreControllerHandleScoreDidChange.lastMultipliedScore;
+            if (BailOutController.instance.numFails > 0 && lastMultipliedScore >= 0)
             {
 #if DEBUG
-                Logger.log?.Debug($"Multiplayer Bailout detected. Overriding raw score '{____prevFrameRawScore}' with '{lastRawScore}'");
+                Logger.log?.Debug($"Multiplayer Bailout detected. Overriding multiplied score '{____multipliedScore}' with '{lastMultipliedScore}'");
 #endif
-                __result = lastRawScore;
+                __result = lastMultipliedScore;
                 return false;
             }
             return true;                
         }
     }
 
-    [HarmonyPatch(typeof(ScoreController), nameof(ScoreController.prevFrameModifiedScore), MethodType.Getter)]
+    [HarmonyPatch(typeof(ScoreController), nameof(ScoreController.modifiedScore), MethodType.Getter)]
     public class ScoreController_prevprevFrameModifiedScore
     {
-        static bool Prefix(ref int ____prevFrameRawScore, ref float ____gameplayModifiersScoreMultiplier, ref int __result)
+        static bool Prefix(ref int ____modifiedScore, ref float ____gameplayModifiersScoreMultiplier, ref int __result)
         {
             int lastModifiedScore = MultiplayerLocalActiveClient_ScoreControllerHandleScoreDidChange.lastModifiedScore;
             if (BailOutController.instance.numFails > 0 && lastModifiedScore >= 0)
             {
-                int modifiedScore = ScoreModel.GetModifiedScoreForGameplayModifiersScoreMultiplier(____prevFrameRawScore, ____gameplayModifiersScoreMultiplier);
+                int modifiedScore = ScoreModel.GetModifiedScoreForGameplayModifiersScoreMultiplier(____modifiedScore, ____gameplayModifiersScoreMultiplier);
 #if DEBUG
                 Logger.log?.Debug($"Multiplayer Bailout detected. Overriding modified score '{modifiedScore}' with '{lastModifiedScore}'");
 #endif

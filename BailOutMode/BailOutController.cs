@@ -237,7 +237,7 @@ namespace BailOutMode
                         Logger.log?.Debug($"All other players failed, triggering level failed.");
                         if (MultiGameplayManager != null)
                         {
-                            MultiGameplayManager.HandleGameEnergyDidReach0();
+                            MultiGameplayManager.GetType().GetMethod("HandleGameEnergyDidReach0").Invoke(MultiGameplayManager, new object[] { });
                         }
                         else
                             Logger.log?.Warn($"Tried to fail level, but ILevelEndActions isn't a StandardLevelGameplayManager.");

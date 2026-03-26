@@ -10,7 +10,7 @@ using BS_Utils;
 
 namespace BailOutMode.Harmony_Patches
 {
-    [HarmonyPatch(typeof(StandardLevelGameplayManager), nameof(StandardLevelGameplayManager.HandleSongDidFinish),
+    [HarmonyPatch(typeof(StandardLevelGameplayManager), "HandleSongDidFinish",
     new Type[] { })]
     internal class StandardLevelGameplayManagerHandleSongDidFinish
     {
@@ -24,7 +24,7 @@ namespace BailOutMode.Harmony_Patches
                 if (BailOutController.instance.numFails > 0)
                 {
                     Logger.log.Debug("Fail detected in BailOutController, forcing level failed");
-                    __instance.HandleGameEnergyDidReach0();
+                    __instance.GetType().GetMethod("HandleGameEnergyDidReach0").Invoke(__instance, new object[] {});
                     return false;
                 }
             }

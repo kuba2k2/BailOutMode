@@ -10,7 +10,7 @@ using BS_Utils;
 
 namespace BailOutMode.Harmony_Patches
 {
-    [HarmonyPatch(typeof(GameEnergyCounter), nameof(GameEnergyCounter.ProcessEnergyChange),
+    [HarmonyPatch(typeof(GameEnergyCounter), "ProcessEnergyChange",
         new Type[] {
         typeof(float)})]
     class GameEnergyCounterProcessEnergyChange
